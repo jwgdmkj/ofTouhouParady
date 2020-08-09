@@ -1,27 +1,35 @@
 #include "Enemy.h"
 
 //water setup
-void Enemy::setup(float max_enemy_amplitude,
-	float max_enemy_shoot_interval, ofImage * enemy_img) 
+void Enemy::setup(float max_enemy_shoot_interval,
+	ofImage * enemy_img)
 {
-	pos.x = ofRandom(ofGetWidth());
-	pos.y = 200;
 	img = enemy_img;
 	width = img->getWidth();
-	speed = 3;
-	amplitude = ofRandom(max_enemy_amplitude);
+	height = img->getHeight();
+	pos.x = middlepoint1;
+	pos.y = middlepoint2 - 4 * height;
+	speed = 8;
+	//	amplitude = ofRandom(max_enemy_amplitude);
 	shoot_interval = ofRandom(0.5, max_enemy_shoot_interval);
 
 	start_shoot = ofGetElapsedTimef();
 	backnforth = 0;
+	enemymoving = -1;
 }
 
 void Enemy::update() {
-	pos.y += amplitude * cos(ofGetElapsedTimef());
-	pos.x += amplitude * sin(ofGetElapsedTimef());
+	if (enemymoving == -1)
+	{
+		pos.y += speed;
+		//	pos.y += amplitude * cos(ofGetElapsedTimef());
+		//	pos.x += amplitude * sin(ofGetElapsedTimef());
+		if (abs(pos.y - middlepoint2) < 8)
+			enemymoving = 0;
+	}
 }
 
-void Enemy::draw(){
+void Enemy::draw() {
 	img->draw(pos.x - width / 2, pos.y - width / 2);
 }
 

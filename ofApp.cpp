@@ -11,7 +11,7 @@ void ofApp::setup() {
 	player_image.load("images/player.png");
 	player_bullet_image.load("images/player_bullet.png");
 	center_image.load("images/Center.png");
-//	player_bullet_sound.load("sounds/player_bullet.mp3");
+	//	player_bullet_sound.load("sounds/player_bullet.mp3");
 	enemy_image.load("images/enemy.png");
 	enemy_bullet_image.load("images/enemy_bullet.png");
 	start_button.load("images/start_button.png");
@@ -27,15 +27,16 @@ void ofApp::setup() {
 	float height = 50;
 
 	player_1.setup(&player_image, player_start, visiblecenter,
-	&center_image);
+		&center_image);
+	enemies.setup(max_enemy_shoot_interval, &enemy_image);
 
 	start_screen.load("images/startScreen.png");
 	end_screen.load("images/end_screen.png");
 	score_font.load("fonts/steelworks_vintage.otf", 48);
 	lobby_screen.load("images/lobby_image.png");
-//	ofSetFrameRate(15);
+	//	ofSetFrameRate(15);
 
-//	ofSetLineWidth(4);
+	//	ofSetLineWidth(4);
 }
 
 void ofApp::update() {
@@ -55,25 +56,21 @@ void ofApp::update() {
 		limitPlayer(&player_1.pos);
 		update_bullets();
 
-		for (int i = 0; i < enemies.size(); i += 1)
+		enemies.update();
+		if (enemies.time_to_shoot())
 		{
-			enemies[i].update();
-			if (enemies[i].time_to_shoot())
-			{
-				Bullet b;
-				b.setup(0, enemies[i].pos, enemies[i].speed,
-					&enemy_bullet_image);
-				bullets.push_back(b);
-			}
+			Bullet b;
+			b.setup(0, enemies.pos, enemies.speed,
+				&enemy_bullet_image);
+			bullets.push_back(b);
 		}
 
-		if (level_controller.should_spawn() == true)
-		{
-			Enemy e;
-			e.setup(max_enemy_amplitude,
-				max_enemy_shoot_interval, &enemy_image);
-			enemies.push_back(e);
-		}
+		//	if (level_controller.should_spawn() == true)
+		//	{
+		//		Enemy e;
+		//		e.setup(max_enemy_amplitude,
+		//			max_enemy_shoot_interval, &enemy_image);
+		//	}
 	}
 
 	else if (game_state == "end");
@@ -86,7 +83,7 @@ void ofApp::draw() {
 	if (game_state == "start")
 	{
 		start_screen.draw(0, 0);
-		start_button.draw(ofGetWidth()/3, ofGetHeight()/3);
+		start_button.draw(ofGetWidth() / 3, ofGetHeight() / 3);
 		exit_button.draw(ofGetWidth() / 3,
 			70 + ofGetHeight() / 3);
 
@@ -101,20 +98,20 @@ void ofApp::draw() {
 	if (game_state == "lobby")
 	{
 		lobby_screen.draw(0, 0);
-		stage1.draw(2* ofGetWidth() / 3, ofGetHeight() / 8);
-		stage2.draw(2* ofGetWidth() / 3,
+		stage1.draw(2 * ofGetWidth() / 3, ofGetHeight() / 8);
+		stage2.draw(2 * ofGetWidth() / 3,
 			80 + ofGetHeight() / 8);
-		stage3.draw(2* ofGetWidth() / 3,
+		stage3.draw(2 * ofGetWidth() / 3,
 			160 + ofGetHeight() / 8);
 
 		if (lobbybutton == 0)
 			instructer.draw(2 * ofGetWidth() / 3 - 20,
-				30+ ofGetHeight() / 8);
-		else if(lobbybutton == 1)
+				30 + ofGetHeight() / 8);
+		else if (lobbybutton == 1)
 			instructer.draw(2 * ofGetWidth() / 3 - 20,
 				110 + ofGetHeight() / 8);
 		else if (lobbybutton == 2)
-			instructer.draw(2* ofGetWidth() / 3 - 20,
+			instructer.draw(2 * ofGetWidth() / 3 - 20,
 				190 + ofGetHeight() / 8);
 
 	}
@@ -124,8 +121,12 @@ void ofApp::draw() {
 		ofBackground(0, 0, 0);
 		ofDrawRectangle(leftscreen, upscreen,
 			rightscreen, downscreen);
-		for (int i = 0; i < enemies.size(); ++i)
-			enemies[i].draw();
+		ofSetColor(255, 0, 0);
+		ofDrawRectangle(lefthealbar, upscreen + ofGetHeight() / 70,
+			(righthealthbar / enemies.enemyhealth)*enemies.nowhealth,
+			ofGetHeight() / 150);
+		ofSetColor(255, 255, 255);
+		enemies.draw();
 
 		for (int i = 0; i < bullets.size(); ++i)
 			bullets[i].draw();
@@ -189,7 +190,7 @@ void ofApp::keyPressed(int key) {
 			visiblecenter = true;
 		}
 
-		if(key==' ')
+		if (key == ' ')
 		{
 			Bullet b1;
 			Bullet b2;
@@ -205,7 +206,7 @@ void ofApp::keyPressed(int key) {
 			bullets.push_back(b1);
 			bullets.push_back(b2);
 			bullets.push_back(b3);
-		//	player_bullet_sound.play();
+			//	player_bullet_sound.play();
 		}
 	}
 }
@@ -265,26 +266,25 @@ void ofApp::update_bullets()
 		}
 	}
 	check_bullet_collisions();
-//	check_bullet_out();
+	//	check_bullet_out();
 }
 
 //checkcollision이 참일 때, 해당 water을 vector내에서 erase
-void ofApp::check_bullet_collisions() 
+void ofApp::check_bullet_collisions()
 {
 	for (int i = 0; i < bullets.size(); i++) {
 		if (bullets[i].from_player)
 		{
-			for (int e = enemies.size() - 1; e >= 0; e--)
+			if (ofDist(bullets[i].pos.x, bullets[i].pos.y,
+				enemies.pos.x, enemies.pos.y) <
+				(enemies.width + bullets[i].width) / 2)
 			{
-				if (ofDist(bullets[i].pos.x, bullets[i].pos.y,
-					enemies[e].pos.x, enemies[e].pos.y) <
-					(enemies[e].width + bullets[i].width) / 2)
-				{
-					enemies.erase(enemies.begin() + e);
-					bullets.erase(bullets.begin() + i);
-					score += 10;
-				}
+				//	enemies.erase(enemies.begin() + e);
+				enemies.nowhealth--;
+				bullets.erase(bullets.begin() + i);
+				score += 10;
 			}
+
 		}
 
 		else {
@@ -317,7 +317,7 @@ void ofApp::check_bullet_collisions()
 //			if (bullets[i].pos.x < downscreen)
 //				bullets.erase(bullets.begin() + i);
 //		}
-	
+
 //	}
 //}
 
@@ -325,11 +325,11 @@ void ofApp::limitPlayer(ofPoint * point)
 {
 	if (point->x < leftscreen)
 		point->x = leftscreen;
-	if(point->x > leftscreen + rightscreen)
+	if (point->x > leftscreen + rightscreen)
 		point->x = leftscreen + rightscreen;
-	if (0 > upscreen) 
+	if (0 > upscreen)
 		point->y = upscreen;
-	if (point->y > upscreen + downscreen) 
+	if (point->y > upscreen + downscreen)
 		point->y = upscreen + downscreen;
 }
 
@@ -344,8 +344,8 @@ void ofApp::draw_lives()
 void ofApp::draw_score()
 {
 	if (game_state == "game")
-		score_font.drawString(ofToString(score), 
-			9* ofGetWidth()/10, ofGetHeight()/4);
+		score_font.drawString(ofToString(score),
+			9 * ofGetWidth() / 10, ofGetHeight() / 4);
 	else if (game_state == "end")
 	{
 		float w = score_font.stringWidth(ofToString(score));
@@ -354,7 +354,7 @@ void ofApp::draw_score()
 	}
 }
 
-void ofApp::reset_game() 
+void ofApp::reset_game()
 {
 
 }

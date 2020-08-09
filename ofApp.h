@@ -18,7 +18,7 @@ public:
 
 	void keyPressed(int key);
 	void keyReleased(int key);
-	void mouseMoved(int x, int y );
+	void mouseMoved(int x, int y);
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
@@ -35,7 +35,7 @@ public:
 	void reset_game();
 	void ofToggleFullscreen();
 	void check_bullet_out();
-	bool visiblecenter=false;
+	bool visiblecenter = false;
 
 	string game_state;
 	int score;
@@ -43,14 +43,20 @@ public:
 	float max_enemy_shoot_interval;
 	int buttonnum;
 	int lobbybutton;
-	float leftscreen=ofGetWidth()/20;
-	float rightscreen=55*(ofGetWidth()/100);
-	float upscreen=ofGetHeight()/13;
-	float downscreen=11*(ofGetHeight()/13);
+	float leftscreen = ofGetWidth() / 20;
+	float rightscreen = 55 * (ofGetWidth() / 100);
+	float upscreen = ofGetHeight() / 13;
+	float downscreen = 11 * (ofGetHeight() / 13);
+	float middlepoint1 = (leftscreen + rightscreen) / 2;
+	float middlepoint2 = 4 * upscreen;
+	float lefthealbar = 2 * leftscreen;;
+	float righthealthbar = rightscreen - leftscreen -
+		ofGetWidth() / 50;
+	float realhealthbar;
 
 	Player player_1;
 	vector<Bullet> bullets;
-	vector<Enemy> enemies;
+	Enemy enemies;
 	LevelController level_controller;
 
 	ofPoint player_start;
