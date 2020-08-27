@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "EnemyParent.h"
 
-class Enemy : public EnemyParent{
+class stage3 : public EnemyParent{
 public:
 
 	ofPoint pos;
@@ -16,14 +16,14 @@ public:
 	float shoot_interval;
 	float when_tomove;
 	float actualTime;
-	int movex_speed=1;
+	int movex_speed = 1;
 	int movey_speed = 1;
 	float movex;
 	float movey;
 	float motox;
 	float motoy;
 
-	void setup(float max_enemy_shoot_interval, 
+	void setup(float max_enemy_shoot_interval,
 		ofImage * enemy_image);
 	void update();
 	void draw();
@@ -35,9 +35,9 @@ public:
 	float downscreen = 11 * (ofGetHeight() / 13);
 	float middlepoint1 = leftscreen + (rightscreen) / 2;
 	float middlepoint2 = 3 * upscreen;
-	int enemymoving=-1;
+	int enemymoving = -1;
 	unsigned int enemyhealth = 100;
-	unsigned int nowhealth=enemyhealth;
+	unsigned int nowhealth = enemyhealth;
 
 	ofImage * img;
 	int backnforth;

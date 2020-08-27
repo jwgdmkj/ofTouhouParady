@@ -1,7 +1,7 @@
-#include "Enemy.h"
+#include "EnemyParent.h"
 
 //water setup
-void Enemy::setup(float max_enemy_shoot_interval,
+void EnemyParent::setup(float max_enemy_shoot_interval,
 	ofImage * enemy_img)
 {
 	img = enemy_img;
@@ -14,11 +14,10 @@ void Enemy::setup(float max_enemy_shoot_interval,
 	shoot_interval = ofRandom(0.5, max_enemy_shoot_interval);
 
 	start_shoot = ofGetElapsedTimef();
-	backnforth = 0;
 	enemymoving = -1;
 }
 
-void Enemy::update() {
+void EnemyParent::update() {
 	if (enemymoving == -1)
 	{
 		pos.y += speed;
@@ -83,7 +82,7 @@ void Enemy::update() {
 	}
 }
 
-void Enemy::checkBoundary()
+void EnemyParent::checkBoundary()
 {
 	if (pos.x < leftscreen + (img->getWidth()) / 2)
 		pos.x = leftscreen + (img->getWidth()) / 2;
@@ -95,11 +94,11 @@ void Enemy::checkBoundary()
 		pos.y = upscreen + downscreen - (img->getHeight()) / 2;
 }
 
-void Enemy::draw() {
+void EnemyParent::draw() {
 	img->draw(pos.x - width / 2, pos.y - width / 2);
 }
 
-bool Enemy::time_to_shoot()
+bool EnemyParent::time_to_shoot()
 {
 	if (ofGetElapsedTimef() - start_shoot > shoot_interval)
 	{

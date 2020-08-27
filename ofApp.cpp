@@ -13,6 +13,8 @@ void ofApp::setup() {
 	center_image.load("images/Center.png");
 	//	player_bullet_sound.load("sounds/player_bullet.mp3");
 	enemy_image.load("images/enemy.png");
+	enemy_image2.load("images/enemy2.png");
+	enemy_image3.load("images/enemy3.png");
 	enemy_bullet_image.load("images/enemy_bullet.png");
 	start_button.load("images/start_button.png");
 	exit_button.load("images/exit.png");
@@ -28,7 +30,7 @@ void ofApp::setup() {
 
 	player_1.setup(&player_image, player_start, visiblecenter,
 		&center_image);
-	enemies.setup(max_enemy_shoot_interval, &enemy_image);
+//	enemies.setup(max_enemy_shoot_interval, &enemy_image);
 
 	start_screen.load("images/startScreen.png");
 	end_screen.load("images/end_screen.png");
@@ -53,7 +55,7 @@ void ofApp::update() {
 	else if (game_state == "game")
 	{
 		player_1.update(visiblecenter);
-		limitPlayer(&player_1.pos);
+		player_1.limitPlayer();
 		update_bullets();
 
 		enemies.update();
@@ -230,7 +232,25 @@ void ofApp::keyReleased(int key) {
 		if (lobbybutton == 0 && key == OF_KEY_RETURN)
 		{
 			game_state = "game";
+			enemies.setup(max_enemy_shoot_interval, &enemy_image);
 			level_controller.setup(ofGetElapsedTimeMillis());
+			enemies.setup(max_enemy_shoot_interval, &enemy_image);
+		}
+
+		if (lobbybutton == 1 && key == OF_KEY_RETURN)
+		{
+			game_state = "game";
+			enemies.setup(max_enemy_shoot_interval, &enemy_image2);
+			level_controller.setup(ofGetElapsedTimeMillis());
+			stageNum = 2;
+		}
+
+		if (lobbybutton == 2 && key == OF_KEY_RETURN)
+		{
+			game_state = "game";
+			enemies.setup(max_enemy_shoot_interval, &enemy_image3);
+			level_controller.setup(ofGetElapsedTimeMillis());
+			stageNum = 3;
 		}
 	}
 
@@ -266,7 +286,7 @@ void ofApp::update_bullets()
 		}
 	}
 	check_bullet_collisions();
-	//	check_bullet_out();
+	check_bullet_out();
 }
 
 //checkcollision이 참일 때, 해당 water을 vector내에서 erase
@@ -302,25 +322,30 @@ void ofApp::check_bullet_collisions()
 	}
 }
 
-//void ofApp::check_bullet_out()
-//{
-//	for (int i = 0; i < bullets.size(); i++)
-//	{
-//		if (bullets[i].from_player)
-//		{
-//			if (bullets[i].pos.x > rightscreen + leftscreen)
-//				bullets.erase(bullets.begin() + i);
-//			if (bullets[i].pos.x < leftscreen)
-//				bullets.erase(bullets.begin() + i);
-//			if (bullets[i].pos.x > upscreen + downscreen)
-//				bullets.erase(bullets.begin() + i);
-//			if (bullets[i].pos.x < downscreen)
-//				bullets.erase(bullets.begin() + i);
-//		}
+void ofApp::check_bullet_out()
+{
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i].from_player) 
+		{
+			if (bullets[i].pos.x > rightscreen + leftscreen
+				|| bullets[i].pos.x < leftscreen ||
+				bullets[i].pos.y > upscreen + downscreen ||
+				bullets[i].pos.y < upscreen)
+				bullets.erase(bullets.begin() + i);
+		}
+		else
+		{
+			if (bullets[i].pos.x > rightscreen + leftscreen
+				|| bullets[i].pos.x < leftscreen ||
+				bullets[i].pos.y > upscreen + downscreen ||
+				bullets[i].pos.y < upscreen)
+				bullets.erase(bullets.begin() + i);
+		}
+	}
+}
 
-//	}
-//}
-
+/*
 void ofApp::limitPlayer(ofPoint * point)
 {
 	if (point->x < leftscreen)
@@ -331,7 +356,7 @@ void ofApp::limitPlayer(ofPoint * point)
 		point->y = upscreen;
 	if (point->y > upscreen + downscreen)
 		point->y = upscreen + downscreen;
-}
+}*/
 
 void ofApp::draw_lives()
 {

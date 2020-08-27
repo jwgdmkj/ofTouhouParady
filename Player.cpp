@@ -28,6 +28,18 @@ void Player::update(bool visible) {
 		pos.x += speed;
 }
 
+void Player::limitPlayer()
+{
+	if (pos.x < leftscreen + (img->getWidth()) / 2)
+		pos.x = leftscreen + (img->getWidth()) / 2;
+	if (pos.x > leftscreen + rightscreen - (img->getWidth()) / 2)
+		pos.x = leftscreen + rightscreen -(img->getWidth()) / 2;
+	if (pos.y < upscreen + (img->getHeight()) / 2)
+		pos.y = upscreen + (img->getHeight())/2;
+	if (pos.y > upscreen + downscreen - (img->getHeight()) / 2)
+		pos.y = upscreen + downscreen - (img->getHeight()) / 2;
+}
+
 //플레이어 그리기
 void Player::draw(bool visible) 
 {

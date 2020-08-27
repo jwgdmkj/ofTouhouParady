@@ -1,7 +1,9 @@
-#include "Enemy.h"
+#include "stage2.h"
+#include <functional>
+#include <windows.h>
 
 //water setup
-void Enemy::setup(float max_enemy_shoot_interval,
+void stage2::setup(float max_enemy_shoot_interval,
 	ofImage * enemy_img)
 {
 	img = enemy_img;
@@ -18,7 +20,7 @@ void Enemy::setup(float max_enemy_shoot_interval,
 	enemymoving = -1;
 }
 
-void Enemy::update() {
+void stage2::update() {
 	if (enemymoving == -1)
 	{
 		pos.y += speed;
@@ -29,21 +31,22 @@ void Enemy::update() {
 	}
 
 	actualTime = ofGetElapsedTimef();
+
 	if (enemymoving != -1)
 	{
-		// enemymoving = 1;
+		//	enemymoving = 1;
 		//when_tomove = ofRandom(5000, 5200);
 
-		// printf("%f, %d\n", actualTime, enemymoving);
+	//	printf("%f, %d\n", actualTime, enemymoving);
 		if ((int)actualTime % 5 == 0 && enemymoving == 0)
 		{
-			// printf("%f\n", actualTime);
+			//	printf("%f\n", actualTime);
 			movex = ofRandom(-100, 100);
 			movey = ofRandom(-30, 30);
-			// movex = ofRandom(-middlepoint1 / 5,
-			// middlepoint1 / 5);
-			// movey = ofRandom(-middlepoint2 / 10,
-			// middlepoint2 / 10);
+			//	movex = ofRandom(-middlepoint1 / 5,
+			//		middlepoint1 / 5);
+			//	movey = ofRandom(-middlepoint2 / 10,
+			//		middlepoint2 / 10);
 			motox = pos.x;
 			motoy = pos.y;
 			enemymoving = 1;
@@ -61,6 +64,12 @@ void Enemy::update() {
 			else
 				movey_speed = 1;
 
+			//		printf("%f, %f, %f, %f,  %d %d\n",
+			//			abs(motox-movex), pos.x,
+			//			abs(motoy - movey), pos.y,
+			//			movex_speed, movey_speed);
+				//	while (abs(motox+movex-pos.x) > 1 &&
+			//			abs(motoy+movey-pos.y) > 1)
 			if (abs(motox + movex - pos.x) > 1)
 			{
 				pos.x += movex_speed;
@@ -71,8 +80,8 @@ void Enemy::update() {
 			}
 
 
-			// printf("%f %f\n", abs(motox + movex - pos.x),
-			// abs(motoy + movey - pos.y));
+			//	printf("%f %f\n", abs(motox + movex - pos.x),
+			//		abs(motoy + movey - pos.y));
 			if (abs(motox + movex - pos.x) <= 1 ||
 				abs(motoy + movey - pos.y) <= 1)
 			{
@@ -83,7 +92,7 @@ void Enemy::update() {
 	}
 }
 
-void Enemy::checkBoundary()
+void stage2::checkBoundary()
 {
 	if (pos.x < leftscreen + (img->getWidth()) / 2)
 		pos.x = leftscreen + (img->getWidth()) / 2;
@@ -95,15 +104,16 @@ void Enemy::checkBoundary()
 		pos.y = upscreen + downscreen - (img->getHeight()) / 2;
 }
 
-void Enemy::draw() {
+void stage2::draw() {
 	img->draw(pos.x - width / 2, pos.y - width / 2);
 }
 
-bool Enemy::time_to_shoot()
+bool stage2::time_to_shoot()
 {
 	if (ofGetElapsedTimef() - start_shoot > shoot_interval)
 	{
 		start_shoot = ofGetElapsedTimef();
+		//	printf("?? %f\n", start_shoot);
 		return true;
 	}
 
